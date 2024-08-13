@@ -14,10 +14,10 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   final List<Map<String, dynamic>> provinces = [
-    {'name': 'Hà Nội', 'latitude': 21.0285, 'longitude': 105.8542},
-    {'name': 'TP. Hồ Chí Minh', 'latitude': 10.8231, 'longitude': 106.6297},
-    {'name': 'Đà Lạt', 'latitude': 11.9404, 'longitude': 108.4583},
-    {'name': 'Đồng Nai', 'latitude': 10.9261, 'longitude': 106.8233},
+    {'name': 'Hà Nội', 'latitude': 21.0833, 'longitude': 105.9167},
+    {'name': 'TP. Hồ Chí Minh', 'latitude': 10.762622, 'longitude': 106.660172},
+    {'name': 'Toronto', 'latitude': 43.6510, 'longitude': -79.3470},
+    {'name': 'New York', 'latitude': 40.7128, 'longitude': -74.0060},
     // Thêm các tỉnh khác ở đây
   ];
 
@@ -30,7 +30,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    _filteredProvinces = provinces; // Khởi tạo danh sách tìm kiếm
+    _filteredProvinces = provinces;
     _searchController.addListener(() {
       _filterProvinces();
     });
@@ -52,100 +52,117 @@ class _WeatherScreenState extends State<WeatherScreen> {
     });
   }
 
+  String _getBackgroundImage() {
+    final int currentHour = DateTime.now().hour;
+
+    if (currentHour >= 6 && currentHour < 18) {
+      return 'assets/day.gif';
+    } else {
+      return 'assets/night.gif';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final weatherProvider = Provider.of<WeatherProvider>(context);
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 17, 17, 17),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 150),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  'Thời Tiết',
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Tìm kiếm tỉnh...',
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search, color: Colors.black),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filteredProvinces.length,
-                itemBuilder: (context, index) {
-                  return Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
+      body: Stack(
+        children: [
+          Image.asset(
+            _getBackgroundImage(),
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 150),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      'Thời Tiết',
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 20.0, horizontal: 15.0),
-                        title: Text(
-                          _filteredProvinces[index]['name'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () async {
-                          await weatherProvider.fetchWeather(
-                              _filteredProvinces[index]['latitude'],
-                              _filteredProvinces[index]['longitude']);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WeatherDetail(
-                                weather: weatherProvider.weatherData!,
-                                formattedDate:
-                                    DateFormat.yMMMMd().format(DateTime.now()),
-                                formattedTime:
-                                    DateFormat.jm().format(DateTime.now()),
-                              ),
-                            ),
-                          );
-                        },
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Tìm kiếm tỉnh...',
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: const Icon(Icons.search, color: Colors.black),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _filteredProvinces.length,
+                    itemBuilder: (context, index) {
+                      return Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 20.0, horizontal: 15.0),
+                            title: Text(
+                              _filteredProvinces[index]['name'],
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () async {
+                              await weatherProvider.fetchWeather(
+                                  _filteredProvinces[index]['latitude'],
+                                  _filteredProvinces[index]['longitude']);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WeatherDetail(
+                                    weather: weatherProvider.weatherData!,
+                                    formattedDate: DateFormat.yMMMMd().format(DateTime.now()),
+                                    formattedTime: DateFormat.jm().format(DateTime.now()),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

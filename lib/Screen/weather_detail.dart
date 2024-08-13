@@ -15,6 +15,7 @@ class WeatherDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final int hour = DateTime.now().hour;
     // Lựa chọn hình ảnh dựa trên điều kiện thời tiết
     String imagePath;
     if (weather.weather.isNotEmpty) {
@@ -35,229 +36,253 @@ class WeatherDetail extends StatelessWidget {
           imagePath = 'assets/cloudy.png';
           break;
         default:
-          imagePath = 'assets/default.png';
+          imagePath = hour >= 6 && hour < 18 ? 'assets/default_night.png' : 'assets/default.png';
           break;
       }
     } else {
-      imagePath = 'assets/default.png';
+      imagePath = hour >= 6 && hour < 18 ? 'assets/default.png' : 'assets/default_night.png';
+    }
+
+    // Xác định thời gian hiện tại
+   
+
+    // Lựa chọn hình nền dựa trên thời gian
+    String backgroundImagePath;
+    if (hour >= 6 && hour < 18) {
+      // Ban ngày: 6h sáng đến 6h chiều
+      backgroundImagePath = 'assets/day.gif';
+    } else {
+      // Ban đêm: 6h chiều đến 6h sáng
+      backgroundImagePath = 'assets/night.gif'; 
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Weather Forecast',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+     
+      body: Stack(
+        children: [
+          // Hiển thị hình nền dựa trên thời gian
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(backgroundImagePath),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        backgroundColor: const Color(0xFF676BD0),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Quay lại trang trước đó
-          },
-        ),
-      ),
-      backgroundColor: const Color(0xFF676BD0),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Hiển thị tên địa điểm
-            Text(
-              weather.name,
-              style: const TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            // Hiển thị nhiệt độ hiện tại
-            Text(
-              "${weather.temperature.current.toStringAsFixed(2)}°C",
-              style: const TextStyle(
-                fontSize: 40,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            // Hiển thị trạng thái thời tiết
-            if (weather.weather.isNotEmpty)
-              Text(
-                weather.weather[0].main,
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Hiển thị tên địa điểm
+                Text(
+                  weather.name,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            const SizedBox(height: 20),
-            // Hiển thị ngày và giờ
-            Text(
-              formattedDate,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              formattedTime,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Hiển thị hình ảnh dựa trên điều kiện thời tiết
-            Container(
-              height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
+                // Hiển thị nhiệt độ hiện tại
+                Text(
+                  "${weather.temperature.current.toStringAsFixed(2)}°C",
+                  style: const TextStyle(
+                    fontSize: 40,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Chi tiết thời tiết khác
-            Container(
-              height: 250,
-              decoration: BoxDecoration(
-                color: Colors.deepPurple,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                // Hiển thị trạng thái thời tiết
+                if (weather.weather.isNotEmpty)
+                  Text(
+                    weather.weather[0].main,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                // Hiển thị ngày và giờ
+                Text(
+                  formattedDate,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  formattedTime,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Hiển thị hình ảnh dựa trên điều kiện thời tiết
+                Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(imagePath),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Chi tiết thời tiết khác
+                Container(
+                  height: 250,
+                  decoration: BoxDecoration(
+                    //color: Color.fromARGB(255, 0, 0, 0),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Icon(
-                              Icons.wind_power,
-                              color: Colors.white,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.wind_power,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(height: 5),
+                                weatherInfoCard(
+                                    title: "Wind",
+                                    value: "${weather.wind.speed}km/h"),
+                              ],
                             ),
-                            const SizedBox(height: 5),
-                            weatherInfoCard(
-                                title: "Wind",
-                                value: "${weather.wind.speed}km/h"),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.sunny,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(height: 5),
+                                weatherInfoCard(
+                                    title: "Max",
+                                    value:
+                                        "${weather.maxTemperature.toStringAsFixed(2)}°C"),
+                              ],
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.wind_power,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(height: 5),
+                                weatherInfoCard(
+                                    title: "Min",
+                                    value:
+                                        "${weather.minTemperature.toStringAsFixed(2)}°C"),
+                              ],
+                            ),
                           ],
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            const Icon(
-                              Icons.sunny,
-                              color: Colors.white,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.water_drop,
+                                  color: Colors.amber,
+                                ),
+                                const SizedBox(height: 5),
+                                weatherInfoCard(
+                                    title: "Humidity",
+                                    value: "${weather.humidity}%"),
+                              ],
                             ),
-                            const SizedBox(height: 5),
-                            weatherInfoCard(
-                                title: "Max",
-                                value:
-                                    "${weather.maxTemperature.toStringAsFixed(2)}°C"),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.wind_power,
-                              color: Colors.white,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.air,
+                                  color: Colors.amber,
+                                ),
+                                const SizedBox(height: 5),
+                                weatherInfoCard(
+                                    title: "Pressure",
+                                    value: "${weather.pressure}hPa"),
+                              ],
                             ),
-                            const SizedBox(height: 5),
-                            weatherInfoCard(
-                                title: "Min",
-                                value:
-                                    "${weather.minTemperature.toStringAsFixed(2)}°C"),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.leaderboard,
+                                  color: Colors.amber,
+                                ),
+                                const SizedBox(height: 5),
+                                weatherInfoCard(
+                                    title: "Sea-Level",
+                                    value: "${weather.seaLevel}m"),
+                              ],
+                            ),
                           ],
-                        ),
+                        )
                       ],
                     ),
-                    const Divider(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.water_drop,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(height: 5),
-                            weatherInfoCard(
-                                title: "Humidity",
-                                value: "${weather.humidity}%"),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.air,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(height: 5),
-                            weatherInfoCard(
-                                title: "Pressure",
-                                value: "${weather.pressure}hPa"),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.leaderboard,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(height: 5),
-                            weatherInfoCard(
-                                title: "Sea-Level",
-                                value: "${weather.seaLevel}m"),
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Column weatherInfoCard({required String title, required String value}) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
-          ),
+  return Column(
+    children: [
+      Text(
+        value,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          shadows: [
+            Shadow(
+              blurRadius: 8.0,
+              color: Colors.black.withOpacity(0.5),
+              offset: Offset(2.0, 2.0),
+            ),
+          ],
         ),
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-          ),
-        )
-      ],
-    );
+      ),
+      Text(
+        title,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+          shadows: [
+            Shadow(
+              blurRadius: 8.0,
+              color: Colors.black.withOpacity(0.5),
+              offset: Offset(2.0, 2.0),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
   }
 }
