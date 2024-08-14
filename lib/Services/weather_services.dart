@@ -9,6 +9,7 @@ class WeatherService {
       Uri.parse(
           "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=509079b22fae7e954dff8403ef5eba0e"),
     );
+    
     // now we can cange latitude and longitude and let's see how it perfrom.
     try {
       if (response.statusCode == 200) {

@@ -20,10 +20,19 @@ class WeatherDetail extends StatelessWidget {
     int hour;
     // Kiểm tra và tính toán thời gian địa phương từ API
     if (weather.timestamp != null && weather.timezoneOffset != null) {
-      localTime = DateTime.fromMillisecondsSinceEpoch(
-        (weather.timestamp! + weather.timezoneOffset!) * 1000,
+      // Tạo DateTime từ timestamp (theo UTC)
+      DateTime utcTime = DateTime.fromMillisecondsSinceEpoch(
+        weather.timestamp! * 1000, // Chuyển đổi từ giây sang milliseconds
         isUtc: true,
       );
+
+      // Đảm bảo rằng timezoneOffset được tính bằng giây
+      int offsetInSeconds = weather.timezoneOffset!;
+
+      // Điều chỉnh thời gian theo timezoneOffset
+      localTime = utcTime.add(Duration(seconds: offsetInSeconds));
+
+      // In để kiểm tra thời gian
     } else {
       // Nếu dữ liệu từ API không hợp lệ, sử dụng giờ hiện tại của thiết bị
       localTime = DateTime.now();
