@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weatherforecast/Model/weather_model.dart';
 
 class WeatherDetail extends StatelessWidget {
@@ -15,22 +16,20 @@ class WeatherDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   DateTime localTime;
-  int hour;
-
-  // Kiểm tra và tính toán thời gian địa phương từ API
-  if (weather.timestamp != null && weather.timezoneOffset != null) {
-    localTime = DateTime.fromMillisecondsSinceEpoch(
-      (weather.timestamp! + weather.timezoneOffset!) * 1000,
-      isUtc: true,
-    );
-  } else {
-    // Nếu dữ liệu từ API không hợp lệ, sử dụng giờ hiện tại của thiết bị
-    localTime = DateTime.now();
-  }
-
-  // Lấy giờ từ thời gian địa phương
-  hour = localTime.hour;
+    DateTime localTime;
+    int hour;
+    // Kiểm tra và tính toán thời gian địa phương từ API
+    if (weather.timestamp != null && weather.timezoneOffset != null) {
+      localTime = DateTime.fromMillisecondsSinceEpoch(
+        (weather.timestamp! + weather.timezoneOffset!) * 1000,
+        isUtc: true,
+      );
+    } else {
+      // Nếu dữ liệu từ API không hợp lệ, sử dụng giờ hiện tại của thiết bị
+      localTime = DateTime.now();
+    }
+    // Lấy giờ từ thời gian địa phương
+    hour = localTime.hour;
     // Lựa chọn hình ảnh dựa trên điều kiện thời tiết
     String imagePath;
     String backgroundImagePath;
@@ -39,13 +38,13 @@ class WeatherDetail extends StatelessWidget {
       backgroundImagePath = 'assets/day.gif';
     } else {
       // Ban đêm: 6h chiều đến 6h sáng
-      backgroundImagePath = 'assets/night.gif'; 
+      backgroundImagePath = 'assets/night.gif';
     }
     if (weather.weather.isNotEmpty) {
       switch (weather.weather[0].main.toLowerCase()) {
         case 'rain':
           imagePath = 'assets/rain.png';
-         backgroundImagePath= 'assets/thunder.gif';
+          backgroundImagePath = 'assets/thunder.gif';
           break;
         case 'snow':
           imagePath = 'assets/snowy.png';
@@ -55,20 +54,23 @@ class WeatherDetail extends StatelessWidget {
           break;
         case 'thunderstorm':
           imagePath = 'assets/storm.png';
-          backgroundImagePath= 'assets/thunder.gif';
+          backgroundImagePath = 'assets/thunder.gif';
           break;
         case 'clouds':
           imagePath = 'assets/cloudy.png';
           break;
         default:
-          imagePath = hour >= 6 && hour < 18 ? 'assets/default.png' : 'assets/default_night.png';
+          imagePath = hour >= 6 && hour < 18
+              ? 'assets/default.png'
+              : 'assets/default_night.png';
           break;
       }
     } else {
-      imagePath = hour >= 6 && hour < 18 ? 'assets/default.png' : 'assets/default_night.png';
+      imagePath = hour >= 6 && hour < 18
+          ? 'assets/default.png'
+          : 'assets/default_night.png';
     }
     return Scaffold(
-     
       body: Stack(
         children: [
           // Hiển thị hình nền dựa trên thời gian
@@ -89,18 +91,16 @@ class WeatherDetail extends StatelessWidget {
                 Text(
                   weather.name,
                   style: const TextStyle(
-                    fontSize: 25,
+                    fontSize: 33,
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 // Hiển thị nhiệt độ hiện tại
                 Text(
-                  "${weather.temperature.current.toStringAsFixed(0)}°C",
+                  "${weather.temperature.current.toStringAsFixed(0)}°",
                   style: const TextStyle(
-                    fontSize: 60,
+                    fontSize: 58,
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 // Hiển thị trạng thái thời tiết
@@ -108,9 +108,8 @@ class WeatherDetail extends StatelessWidget {
                   Text(
                     weather.weather[0].main,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 33,
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 const SizedBox(height: 20),
@@ -118,15 +117,16 @@ class WeatherDetail extends StatelessWidget {
                 Text(
                   formattedDate,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 22,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
                 Text(
-                  formattedTime,
+                  "${DateFormat('h:mm a').format(localTime)}",
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 22,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -152,8 +152,8 @@ class WeatherDetail extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -261,39 +261,39 @@ class WeatherDetail extends StatelessWidget {
   }
 
   Column weatherInfoCard({required String title, required String value}) {
-  return Column(
-    children: [
-      Text(
-        value,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 18,
-          shadows: [
-            Shadow(
-              blurRadius: 8.0,
-              color: Colors.black.withOpacity(0.5),
-              offset: Offset(2.0, 2.0),
-            ),
-          ],
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            shadows: [
+              Shadow(
+                blurRadius: 8.0,
+                color: Colors.black.withOpacity(0.5),
+                offset: Offset(2.0, 2.0),
+              ),
+            ],
+          ),
         ),
-      ),
-      Text(
-        title,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-          fontSize: 16,
-          shadows: [
-            Shadow(
-              blurRadius: 8.0,
-              color: Colors.black.withOpacity(0.5),
-              offset: Offset(2.0, 2.0),
-            ),
-          ],
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            shadows: [
+              Shadow(
+                blurRadius: 8.0,
+                color: Colors.black.withOpacity(0.5),
+                offset: Offset(2.0, 2.0),
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
   }
 }
