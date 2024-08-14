@@ -15,13 +15,37 @@ class WeatherDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final int hour = DateTime.now().hour;
+   DateTime localTime;
+  int hour;
+
+  // Kiểm tra và tính toán thời gian địa phương từ API
+  if (weather.timestamp != null && weather.timezoneOffset != null) {
+    localTime = DateTime.fromMillisecondsSinceEpoch(
+      (weather.timestamp! + weather.timezoneOffset!) * 1000,
+      isUtc: true,
+    );
+  } else {
+    // Nếu dữ liệu từ API không hợp lệ, sử dụng giờ hiện tại của thiết bị
+    localTime = DateTime.now();
+  }
+
+  // Lấy giờ từ thời gian địa phương
+  hour = localTime.hour;
     // Lựa chọn hình ảnh dựa trên điều kiện thời tiết
     String imagePath;
+    String backgroundImagePath;
+    if (hour >= 6 && hour < 18) {
+      // Ban ngày: 6h sáng đến 6h chiều
+      backgroundImagePath = 'assets/day.gif';
+    } else {
+      // Ban đêm: 6h chiều đến 6h sáng
+      backgroundImagePath = 'assets/night.gif'; 
+    }
     if (weather.weather.isNotEmpty) {
       switch (weather.weather[0].main.toLowerCase()) {
         case 'rain':
           imagePath = 'assets/rain.png';
+         backgroundImagePath= 'assets/thunder.gif';
           break;
         case 'snow':
           imagePath = 'assets/snowy.png';
@@ -31,31 +55,18 @@ class WeatherDetail extends StatelessWidget {
           break;
         case 'thunderstorm':
           imagePath = 'assets/storm.png';
+          backgroundImagePath= 'assets/thunder.gif';
           break;
         case 'clouds':
           imagePath = 'assets/cloudy.png';
           break;
         default:
-          imagePath = hour >= 6 && hour < 18 ? 'assets/default_night.png' : 'assets/default.png';
+          imagePath = hour >= 6 && hour < 18 ? 'assets/default.png' : 'assets/default_night.png';
           break;
       }
     } else {
       imagePath = hour >= 6 && hour < 18 ? 'assets/default.png' : 'assets/default_night.png';
     }
-
-    // Xác định thời gian hiện tại
-   
-
-    // Lựa chọn hình nền dựa trên thời gian
-    String backgroundImagePath;
-    if (hour >= 6 && hour < 18) {
-      // Ban ngày: 6h sáng đến 6h chiều
-      backgroundImagePath = 'assets/day.gif';
-    } else {
-      // Ban đêm: 6h chiều đến 6h sáng
-      backgroundImagePath = 'assets/night.gif'; 
-    }
-
     return Scaffold(
      
       body: Stack(
@@ -85,9 +96,9 @@ class WeatherDetail extends StatelessWidget {
                 ),
                 // Hiển thị nhiệt độ hiện tại
                 Text(
-                  "${weather.temperature.current.toStringAsFixed(2)}°C",
+                  "${weather.temperature.current.toStringAsFixed(0)}°C",
                   style: const TextStyle(
-                    fontSize: 40,
+                    fontSize: 60,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),

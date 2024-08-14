@@ -1,7 +1,6 @@
 class WeatherData {
   final String name;
   final Temperature temperature;
-
   final int humidity;
   final Wind wind;
   final double maxTemperature;
@@ -9,6 +8,8 @@ class WeatherData {
   final int pressure;
   final int seaLevel;
   final List<WeatherInfo> weather;
+  final int timestamp;
+  final int timezoneOffset;
 
   WeatherData({
     required this.name,
@@ -20,6 +21,8 @@ class WeatherData {
     required this.pressure,
     required this.seaLevel,
     required this.weather,
+    required this.timestamp,
+    required this.timezoneOffset,
   });
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
@@ -37,6 +40,8 @@ class WeatherData {
           (weather) => WeatherInfo.fromJson(weather),
         ),
       ),
+      timestamp: json['dt'],
+      timezoneOffset: json['timezone'],
     );
   }
 }
